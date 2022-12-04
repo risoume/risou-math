@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ "/assets/favicon/favicon-32x32.png" | relative_url }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ "/assets/favicon/favicon-16x16.png" | relative_url }}">
+    <link rel="manifest" href="{{ "/assets/favicon/site.webmanifest" | relative_url }}">
+    <link rel="shortcut icon" href="{{ "/assets/favicon/favicon.ico" | relative_url }}">
+
+    <title>Risou Math</title>
+    <link rel="stylesheet" href="{{ "/assets/css/style.css" | relative_url }}">
+
+    {%- include mathjax.html -%}
+
+</head>
+
+<body> 
+<header> 
+    <nav>
+        <a href="https://risoume.github.io">Landing Page</a>
+    </nav> 
+</header> 
+
+<main>
+
+    <p style="text-align: center;">
+        ! I am rewriting the old <a style="color: #465883; font-weight: bold;" href="https://risoume.github.io/mathematics">
+            Risou Math</a> site.</p>
+
+<!-- Ini diisi manual -->
+{% assign soal_tag = "Lingkaran" | split: ", " | sort %}
+
+{% assign alat_tag = "Basis Bilangan" | split: ", " | sort  %}
+
+<h1 class="category">Soal</h1>
+
+<div class="content-page">
+    {% for tag in soal_tag %}
+        <div class="topic-list">
+            <h1>{{ tag }}</h1>
+            <ol>
+                {% assign sorted_post = site.tags[tag] | sort: "title" %}
+                {% for post in sorted_post %}
+                <li>
+                    <a href="{{ post.url | relative_url }}">
+                        {{ post.title_page | escape }}
+                    </a>
+                </li>
+                <hr>
+                {% endfor %}
+            </ol>
+        </div>
+    {% endfor %}
+</div>
+
+<h1 class="category">Alat</h1>
+
+<div class="content-page">
+    {% for tag in alat_tag %}
+        <div class="topic-list">
+        <h1>{{ tag }}</h1>
+            <ol>
+                {% assign sorted_post = site.tags[tag] | sort: "title" %}
+                {% for post in sorted_post %}
+                <li>
+                    <a href="{{ post.url | relative_url }}">
+                        {{ post.title_page | escape }}
+                    </a>
+                </li>
+                <hr>
+                {% endfor %}
+            </ol>
+        </div>
+    {% endfor %}
+</div>
+
+
+</main>
+</body>
+</html>

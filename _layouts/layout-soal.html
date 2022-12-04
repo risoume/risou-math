@@ -1,0 +1,39 @@
+
+{%- include head.html -%}
+
+<body>
+
+{%- include header.html -%}
+
+<main>
+
+<div class="content"> 
+    <div class="subject">
+        <a href="https://github.com/risoume/mathematics/blob/main/assets/js/{{ path }}.js"><span>&lt;code></span></a>
+        
+        <p>{{ page.title_page }}</p>
+        <p><span style="color: #d2001b">Batasan:</span> {{ page.panduan | escape }}</p>
+
+        <div class="user-area">
+            {% for input in page.input %}
+                <label class="label-input">
+                    {{ input.label }}:
+                </label>
+                <input id="input{{ input.nomor }}" class="input-block" value="{{ input.nilai_awal }}" autofocus="autofocus">
+            {% endfor %}
+
+            <button id="solve">Solve</button>
+        </div>
+    </div> 
+
+    <div class="math-show">
+        <p id="output1"></p>
+        <p><span id="look">lihat solusi</span></p>
+        <p id="output2"></p>
+    </div>
+
+</div>
+
+</main>
+</body>
+</html>

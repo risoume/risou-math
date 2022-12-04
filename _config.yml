@@ -1,0 +1,26 @@
+
+title: "Risou Math"
+permalink: /:categories/:title/
+
+# setting default layout for soal (question) and alat (tools)
+# setting default tag for each post similar to the name of its folder in soal and alat
+defaults:
+  - scope:
+      path: alat
+    values:
+      layout: layout-alat
+  - scope:
+      path: soal
+    values:
+      layout: layout-soal
+  - scope:
+      path: soal/lingkaran
+    values:
+      tag: Lingkaran
+  - scope:
+      path: alat/basis-bilangan
+    values:
+      tag: Basis Bilangan
+
+sass:
+  style: compressed # default expanded
