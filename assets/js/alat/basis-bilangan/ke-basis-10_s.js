@@ -11,9 +11,17 @@ function solusi() {
     let str = digits.map((i, index) => `${parseInt(i, b)} (${b}^{${len - index - 1}})`).join('+');
     let str2 = digits.map((i, index) => '' + parseInt(i, b) * (b ** (len - index - 1))).join('+');
 
-    const solusi = `${_b} (\\text{${a}})_{${b}} &= ${str}\\\\
+    let hasil = '';
+    if (len > 1) {
+        hasil = `${_b} (\\text{${a}})_{${b}} &= ${str}\\\\
         &= ${str2}\\\\
         &= ${parseInt(a, b)} ${_e}`;
+    } else {
+        hasil = `${_b} (\\text{${a}})_{${b}} &= ${str}\\\\
+        &= ${parseInt(a, b)} ${_e}`;
+    }
+
+    const solusi = hasil;
 
     output2.style.display = 'block';
     output2.innerHTML = `<b>Solusi:</b><br> ${solusi}`;
