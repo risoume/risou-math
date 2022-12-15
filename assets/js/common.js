@@ -129,6 +129,13 @@ function defPlus(x) {
     return x < 0 ? '' + x : '+' + x;
 }
 
+// seperti defPlus() dan defMinus() tapi tidak menampilkan 0
+function defSign(x) {
+    if (x > 0) return '+' + x;
+    if (x < 0) return '' + x;
+    return '';
+}
+
 // mengambil bilangan bulat acak a dengan x <= a <= y
 function intRandom(x, y) {
     return Math.floor(Math.random() * (y - x + 1) + x);
@@ -283,6 +290,34 @@ class Frac {
     }
 }
 
+// shortcut untuk membuat pecahan dalam latex dari array input
+function frac(a) {
+    return new Frac(a).reduksi().tex();
+}
+
+class Garis {
+    constructor(a, b, c) {
+        if (a === 0 && b === 0) throw 'Invalid argument';
+        
+        this.a = a;
+        this.b = b;
+        this.c = c;
+    }
+
+    bentukUmum() {
+        if (this.a == 0 && this.c == 0)
+            return `y=0`;
+
+        if (this.b == 0 && this.c == 0)
+            return `x=0`;
+
+        if (this.a !== 0)
+            return `${sign1Coef(this.a, 'x')} ${signCoef(this.b, 'y')} ${defSign(this.c)} = 0`;
+        
+        return `${sign1Coef(this.b, 'y')} ${defSign(this.c)} = 0`;
+    }
+}
+
 // mengabungkan koefisien dg variabelnya, misal signCoef(-4/3, 'z') => \frac{-4}{3}z
 function signCoef(a, x) {
     if (a instanceof Frac) {
@@ -300,7 +335,10 @@ function signCoef(a, x) {
     }
 }
 
-// shortcut untuk membuat pecahan dalam latex dari array input
-function frac(a) {
-    return new Frac(a).reduksi().tex();
+// seperti signCoef() tapi tidak menampilkan tanda tambah karena merupakan suku pertama
+function sign1Coef(a, x) {
+    if (a === 0) return '';
+    if (a === 1) return x;
+    if (a === -1) return '-' + x;
+    return a + x;
 }
