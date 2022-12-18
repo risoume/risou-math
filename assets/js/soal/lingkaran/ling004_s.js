@@ -32,7 +32,7 @@ function solusi() {
         Jari-jari:
         ${_b}r &= \\sqrt{\\frac{A^2}{4} + \\frac{B^2}{4} - C}\\\\
         &= \\sqrt{\\frac{(${ frac(a) })^2}{4} + \\frac{(${ frac(b) })^2}{4}
-        ${ new Frac(c).reduksi().defMinus() }}\\\\
+        ${ new Frac(c).defMinus() }}\\\\
         &= \\sqrt{${ r2.tex() }} ${ r } ${_e}`;
   
     output2.style.display = 'block';

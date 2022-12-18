@@ -138,7 +138,7 @@ function defPlus(x) {
     return x < 0 ? '' + x : '+' + x;
 }
 
-// seperti defPlus() dan defMinus() tapi tidak menampilkan 0
+// seperti defPlus() tapi tidak menampilkan 0
 function defSign(x) {
     if (x > 0) return '+' + x;
     if (x < 0) return '' + x;
@@ -179,26 +179,25 @@ class Ling {
         if (typeof a == "object" && a.length == 3) {
             let [A, B, C] = a;
 
-            this.a = new Frac(A).kali(-0.5).reduksi();
-            this.b = new Frac(B).kali(-0.5).reduksi();
+            this.a = new Frac(A).kali(-0.5);
+            this.b = new Frac(B).kali(-0.5);
             this.r2 = new Frac(A).pangkat(2).bagi(4)
                 .tambah( new Frac(B).pangkat(2).bagi(4) )
-                .kurang( new Frac(C) )
-                .reduksi();
+                .kurang( new Frac(C) );
         }
         
         // jika diberikan pusat lingkaran, radius, dan radius kuadrat
         else {
-            this.a = new Frac(a).reduksi();
-            this.b = new Frac(b).reduksi();
-            this.r = new Frac(r).reduksi();
-            this.r2 = r2 == undefined ? this.r.pangkat(2) : new Frac(r2).reduksi();
+            this.a = new Frac(a);
+            this.b = new Frac(b);
+            this.r = new Frac(r);
+            this.r2 = r2 == undefined ? this.r.pangkat(2) : new Frac(r2);
         }
         
         this.aSign = this.a.defMinus();
         this.bSign = this.b.defMinus();
-        this.ASign = signCoef( this.a.kali(-2).reduksi(), 'x' );
-        this.BSign = signCoef( this.b.kali(-2).reduksi(), 'y' );
+        this.ASign = this.a.kali(-2).signCoef('x');
+        this.BSign = this.b.kali(-2).signCoef('y');
 
         this.C = this.a.pangkat(2)
             .tambah( this.b.pangkat(2) )
@@ -209,6 +208,17 @@ class Ling {
 
     pusat() {
         return [this.a, this.b];
+    }
+
+    posisiTitik(_x, _y) {
+        let x = new Frac(_x);
+        let y = new Frac(_y);
+        let subs = x.kurang(this.a).pangkat(2)
+            .tambah( y.kurang(this.b).pangkat(2) );
+
+        if (subs > this.r2) return 'di luar';
+        if (subs < this.r2) return 'di dalam';
+        return 'pada';
     }
 
     // persamaan lingkaran (x-a)^2 + (y-b)^2 = r^2
@@ -233,6 +243,8 @@ class Frac {
 
         this.n = d > 0 ? n : -n;
         this.d = d > 0 ? d : -d;
+
+        this.reduksi();
     }
 
     komponen() {
@@ -242,10 +254,13 @@ class Frac {
     // menyederhanakan: 4/6 -> 2/3, 4/2 -> 2, 0,5/2 -> 1/4
     reduksi() {
         if (Number.isInteger(this.n) && Number.isInteger(this.d)) {
-            let g = gcdN([this.n, this.d]);
-            return new Frac(this.n / g, this.d / g);
+            let g = gcd(Math.abs(this.n), Math.abs(this.d));
+            this.n /= g;
+            this.d /= g;
         } else {
-            return new Frac(this.n * 10, this.d * 10).reduksi();
+            this.n * 10;
+            this.d * 10;
+            this.reduksi();
         }
     }
 
@@ -255,9 +270,9 @@ class Frac {
             return new Frac(
                 this.n * (x.d / g) + x.n * (this.d / g),
                 this.d * (x.d / g)
-            ).reduksi();
+            );
         } else {
-            return new Frac(this.n + x * this.d, this.d).reduksi();
+            return new Frac(this.n + x * this.d, this.d);
         }
     }
 
@@ -270,9 +285,9 @@ class Frac {
 
     kali(x) {
         if (x instanceof Frac)
-            return new Frac(this.n * x.n, this.d * x.d).reduksi();
+            return new Frac(this.n * x.n, this.d * x.d);
         else
-            return new Frac(this.n * x, this.d).reduksi();
+            return new Frac(this.n * x, this.d);
     }
 
     // input x, output 1/x
@@ -316,21 +331,35 @@ class Frac {
             return '+' + this.tex();
     }
 
+    // seperti defPlus() tapi tidak menampilkan 0
+    defSign() {
+        if (this.n > 0) return '+' + this.tex();
+        if (this.n < 0) return '-' + new Frac(-this.n, this.d).tex();
+        return '';
+    }
+
+    // mengabungkan koefisien dg variabel, misal signCoef(-4/3, 'z') => \frac{-4}{3}z
+    signCoef(x) {
+        if (this.n == 0) return '';
+        if (this.n == 1 && this.d == 1) return '+' + x;
+        if (this.n == -1 && this.d == 1) return '-' + x;
+        if (this.n < 0) return '-' + new Frac(-this.n, this.d).tex() + x;
+        return '+' + this.tex() + x;
+    }
+
     valueOf() {
         return this.n / this.d;
     }
 
     // memeriksa apakah 2 pecahan sama
     isEqual(x) {
-        let p1 = this.reduksi();
-        let p2 = x.reduksi();
-        return p1.n === p2.n && p1.d === p2.d;
+        return this.n === x.n && this.d === x.d;
     }
 }
 
 // shortcut untuk membuat pecahan dalam latex dari array input
 function frac(a) {
-    return new Frac(a).reduksi().tex();
+    return new Frac(a).tex();
 }
 
 class Garis {
