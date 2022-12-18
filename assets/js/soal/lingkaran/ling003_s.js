@@ -47,12 +47,7 @@ function solve() {
     let g = gcdN([c, d, e]);
     if (g !== 1) [c, d, e] = [c/g, d/g, e/g];
 
-    if (cond.some(_ => !_)) {
-        output1.innerHTML = 'Input tidak valid. Periksa kembali batasan.';
-        output2.style.display = 'none';
-        return;
-    }
-
+    if(!cekBatasan()) return;
     solveHandler();
 }
 

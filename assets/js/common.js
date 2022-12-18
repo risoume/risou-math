@@ -48,15 +48,24 @@ solveButton.addEventListener("click", () => solve(), false);
 let inputAll = document.querySelectorAll('input');
 for (let i = 0; i < inputAll.length; i++){
     inputAll[i].addEventListener('keydown', e => {
-        if (e.keyCode === 13) {
-            if (i < inputAll.length -1) {
-                inputAll[i + 1].focus();
-            } else {
-                solveButton.focus();
-                solve();
-            }
+        if (e.keyCode !== 13) return;
+
+        if (i < inputAll.length -1) {
+            inputAll[i + 1].focus();
+        } else {
+            solveButton.focus();
+            solve();
         }
     }, false);
+}
+
+// memeriksa batasan input dari user agar program valid
+function cekBatasan() {
+    if (cond.every(_ => _)) return true;
+
+    output1.innerHTML = 'Input tidak valid. Periksa kembali batasan.';
+    output2.style.display = 'none';
+    return false;
 }
 
 function solveHandler() {
@@ -160,39 +169,63 @@ function isSquare(x) {
     return Number.isInteger(Math.sqrt(x));
 }
 
-// objek lingkaran: input bilangan bulat atau array yang memuat pembilang dan penyebut pecahan
+// objek lingkaran: input dapat berupa pusat lingkaran, radius, dan radius kuadrat
+// atau array [A, B, C] pada persamaan x^2+y^2+Ax+By+C=0
+// dalam bilangan bulat atau pecahan
 class Ling {
     constructor(a, b, r, r2) {
-        this.a = typeof a == "number" ? new Frac(a) : new Frac(a[0], a[1]).reduksi();
-        this.b = typeof b == "number" ? new Frac(b) : new Frac(b[0], b[1]).reduksi();
-        this.r = typeof r == "number" ? new Frac(r) : new Frac(r[0], r[1]).reduksi();
-        this.r2 = r2 == undefined ? this.r.pangkat(2) :
-            typeof r2 == "number" ? new Frac(r2) : new Frac(r2[0], r2[1]).reduksi();
+
+        // jika a array yang memuat nilai A, B, C pada persamaan x^2+y^2+Ax+By+C=0
+        if (typeof a == "object" && a.length == 3) {
+            let [A, B, C] = a;
+
+            this.a = new Frac(A).kali(-0.5).reduksi();
+            this.b = new Frac(B).kali(-0.5).reduksi();
+            this.r2 = new Frac(A).pangkat(2).bagi(4)
+                .tambah( new Frac(B).pangkat(2).bagi(4) )
+                .kurang( new Frac(C) )
+                .reduksi();
+        }
+        
+        // jika diberikan pusat lingkaran, radius, dan radius kuadrat
+        else {
+            this.a = new Frac(a).reduksi();
+            this.b = new Frac(b).reduksi();
+            this.r = new Frac(r).reduksi();
+            this.r2 = r2 == undefined ? this.r.pangkat(2) : new Frac(r2).reduksi();
+        }
         
         this.aSign = this.a.defMinus();
         this.bSign = this.b.defMinus();
         this.ASign = signCoef( this.a.kali(-2).reduksi(), 'x' );
         this.BSign = signCoef( this.b.kali(-2).reduksi(), 'y' );
 
-        this.C = this.a.pangkat(2).tambah( this.b.pangkat(2) ).kurang( this.r2 );
+        this.C = this.a.pangkat(2)
+            .tambah( this.b.pangkat(2) )
+            .kurang( this.r2 );
+
         this.CSign = this.C.n ? this.C.defPlus() : '';
     }
 
-    // (x-a)^2 + (y-b)^2 = r^2
+    pusat() {
+        return [this.a, this.b];
+    }
+
+    // persamaan lingkaran (x-a)^2 + (y-b)^2 = r^2
     bentukStandar() {
         this.strA = this.a.n ? `\\left(x ${this.aSign}\\right)^2` : 'x^2';
         this.strB = this.b.n ? `\\left(y ${this.bSign}\\right)^2` : 'y^2';
         return `${this.strA} + ${this.strB} = ${this.r2.tex()}`;
     }
 
-    // x^2 + y^2 + Ax + By + C = 0
+    // persamaan lingkaran x^2 + y^2 + Ax + By + C = 0
     bentukUmum() {
         return `x^2 + y^2 ${this.ASign} ${this.BSign} ${this.CSign} = 0`;
     }
 }
 
 // objek pecahan (Fraction) dan operasinya
-// menerima argumen bilangan bulat, 2 bilangan bulat, atau array yang memuat 2 bilangan bulat
+// menerima argumen bilangan bulat, 2 bilangan bulat, atau array 2 bilangan bulat
 class Frac {
     constructor(n, d = 1) {
         if (d === 0) throw 'Invalid argument';
@@ -263,6 +296,7 @@ class Frac {
     tex() {
         if (!this.n) return '0';
         if (this.d == 1) return this.n + '';
+        if (this.n < 0) return `-\\frac{${ -this.n }}{${ this.d }}`;
         return `\\frac{${ this.n }}{${ this.d }}`;
     }
 
@@ -280,6 +314,10 @@ class Frac {
             return '-' + new Frac(-this.n, this.d).tex();
         else
             return '+' + this.tex();
+    }
+
+    valueOf() {
+        return this.n / this.d;
     }
 
     // memeriksa apakah 2 pecahan sama
@@ -304,6 +342,7 @@ class Garis {
         this.c = c;
     }
 
+    // persamaan garis ax + by + c = 0
     bentukUmum() {
         if (this.a == 0 && this.c == 0)
             return `y=0`;

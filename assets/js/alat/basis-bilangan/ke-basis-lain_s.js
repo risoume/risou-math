@@ -31,12 +31,7 @@ function solve() {
     cond[3] = a > 0; // bilangan asli
     cond[4] = b >= 2 && b <= 36;
 
-    if (cond.some(_ => !_)) {
-        output1.innerHTML = 'Input tidak valid. Periksa kembali batasan.';
-        output2.style.display = 'none';
-        return;
-    }
-
+    if(!cekBatasan()) return;
     solveHandler();
 }
 

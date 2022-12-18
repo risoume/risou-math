@@ -33,15 +33,13 @@ function solve() {
     cond[3] = arr.every(i => i[1] !== 0); // penyebut tidak nol (jika ada)
 
     [a, b, c, d] = arr;
-    cond[4] = !(new Frac(a).isEqual(new Frac(c)))
-        || !(new Frac(b).isEqual(new Frac(d))); // jari jari tidak 0
 
-    if (cond.some(_ => !_)) {
-        output1.innerHTML = 'Input tidak valid. Periksa kembali batasan.';
-        output2.style.display = 'none';
-        return;
-    }
+    try {
+        cond[4] = !(new Frac(a).isEqual(new Frac(c)))
+            || !(new Frac(b).isEqual(new Frac(d))); // jari jari tidak 0
+    } catch {} // abaikan error ketika penyebut 0 karena akan diperiksa di cekBatasan()
 
+    if(!cekBatasan()) return;
     solveHandler();
 }
 

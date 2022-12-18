@@ -27,13 +27,8 @@ function solve() {
     [a, b, c] = arr;
     cond[4] = c[1] ? c[0] * c[1] > 0 : c[0] > 0;  // jari jari positif
 
-    if (cond.some(_ => !_)) {
-        output1.innerHTML = 'Input tidak valid. Periksa kembali batasan.';
-        output2.style.display = 'none';
-        return;
-    }
-
-    solveHandler()
+    if(!cekBatasan()) return;
+    solveHandler();
 }
 
 function soalRandom() {
@@ -47,7 +42,7 @@ function soalRandom() {
     b = [intRandom(-10, 10)];
     c = [intRandom(2, 10)];
 
-    solveHandler()
+    solveHandler();
 }
 
 solve();

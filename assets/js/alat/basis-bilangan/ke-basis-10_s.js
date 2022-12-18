@@ -30,21 +30,17 @@ function solusi() {
 function solve() {
     a = input1.value.toUpperCase();
     b = parseInt(input2.value);
+    
     cond[1] = a.length > 0;
     try {
         cond[2] = a.match(/[a-z0-9]/gi).length === a.length // input user tidak memuat selain abjad dan digit
-    }
-    catch {}
+    } catch {}
+
     cond[3] = !isNaN(b);
     cond[4] = b >= 2 && b <= 36; // basis di antara 2 - 36
     cond[5] = [...a].every(i => !isNaN(parseInt(i, b))); // digit-digit a harus lebih kecil dari b
 
-    if (cond.some(_ => !_)) {
-        output1.innerHTML = 'Input tidak valid. Periksa kembali batasan.';
-        output2.style.display = 'none';
-        return;
-    }
-
+    if(!cekBatasan()) return;
     solveHandler();
 }
 
