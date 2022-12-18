@@ -258,8 +258,8 @@ class Frac {
             this.n /= g;
             this.d /= g;
         } else {
-            this.n * 10;
-            this.d * 10;
+            this.n *= 10;
+            this.d *= 10;
             this.reduksi();
         }
     }
